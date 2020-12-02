@@ -24,25 +24,23 @@ func main() {
 	counter2 := 0
 
 	for scanner.Scan() {
-		line := scanner.Text()
-
-		split := strings.Split(line, ":")
-		rule := strings.Split(split[0], " ")
+		line := strings.Split(scanner.Text(), ":")
+		rule := strings.Split(line[0], " ")
 		counts := strings.Split(rule[0], "-")
-		min, _ := strconv.Atoi(counts[0])
-		max, _ := strconv.Atoi(counts[1])
+		num1, _ := strconv.Atoi(counts[0])
+		num2, _ := strconv.Atoi(counts[1])
 
-		r := Rule{min, max, rule[1]}
+		r := Rule{num1, num2, rule[1]}
 
-		check1(split[1], r, &counter1)
-		check2(split[1], r, &counter2)
+		part1(line[1], r, &counter1)
+		part2(line[1], r, &counter2)
 	}
 
 	log.Print(counter1)
 	log.Print(counter2)
 }
 
-func check1(password string, rule Rule, counter *int) {
+func part1(password string, rule Rule, counter *int) {
 	charCount := strings.Count(password, rule.char)
 
 	if charCount >= rule.num1 && charCount <= rule.num2 {
@@ -50,7 +48,7 @@ func check1(password string, rule Rule, counter *int) {
 	}
 }
 
-func check2(password string, rule Rule, counter *int) {
+func part2(password string, rule Rule, counter *int) {
 	if (password[rule.num1] == rule.char[0]) !=
 		(password[rule.num2] == rule.char[0]) {
 		*counter = *counter + 1
