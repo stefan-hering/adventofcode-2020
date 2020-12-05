@@ -1,15 +1,14 @@
 # include <stdio.h>
 
+int seats[1024];
 
 int main(){
     FILE *fp;
     char buff[16];
-    int seats[128][8];
 
     fp = fopen("./input", "r");
 
     int scan = fscanf(fp, "%s", buff);
-
     int highest = 1;
 
     while (scan != EOF) {
@@ -30,10 +29,17 @@ int main(){
             highest = seat;
         }
 
+        seats[seat] = seat;
         scan = fscanf(fp, "%s", buff);
     }
 
-    printf("Highest seatno: %d", highest);
+    for(int i = 1; i < 1023; i++) {
+        if(seats[i] == 0 && seats[i+1] != 0 && seats[i - 1] != 0) {
+            printf("Found seat: %d\n", i);
+        }
+    }
+
+    printf("Highest seatno: %d\n", highest);
 
     fclose(fp);
     return 0;
