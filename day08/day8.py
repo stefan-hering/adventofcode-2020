@@ -63,11 +63,11 @@ def execute(program):
 
 def fixInstruction(program):
     for i in range(len(program)):
-        copy = dict(program)
         instruction = program[i]
-
         if instruction.command == 'acc':
             continue
+
+        copy = dict(program)
 
         if instruction.command == 'jmp':
             copy[i] = Instruction('nop', instruction.number)
