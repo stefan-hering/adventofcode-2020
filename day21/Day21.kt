@@ -25,19 +25,19 @@ fun readRecipes(): List<Recipe> = readLines().asSequence()
     }
     .toList()
 
-fun getPossibleIngredientsForAllergens(recipes: List<Recipe>): Map<String, Set<String>> {
-    val possibleAllergents = mutableMapOf<String, Set<String>>()
+fun getAllergensToPossibleIngredients(recipes: List<Recipe>): Map<String, Set<String>> {
+    val possibleAllergens = mutableMapOf<String, Set<String>>()
     recipes.forEach { recipe ->
         recipe.allergens.forEach { allergen ->
-            possibleAllergents[allergen]?.let {
-                possibleAllergents[allergen] = it.intersect(recipe.ingredients)
-            } ?: possibleAllergents.put(allergen, recipe.ingredients)
+            possibleAllergens[allergen]?.let {
+                possibleAllergens[allergen] = it.intersect(recipe.ingredients)
+            } ?: possibleAllergens.put(allergen, recipe.ingredients)
         }
     }
-    return possibleAllergents
+    return possibleAllergens
 }
 
-fun getAllergensToIngredients(allergensToPossibleIngredients: Map<String, Set<String>>): MutableMap<String, String> {
+fun getAllergensToIngredients(allergensToPossibleIngredients: Map<String, Set<String>>): Map<String, String> {
     val allergensToIngredients = mutableMapOf<String, String>()
     var possibleAllergens = allergensToPossibleIngredients
 
@@ -59,7 +59,7 @@ fun main() {
     val recipes = readRecipes()
 
     val allergensToIngredients =
-        getAllergensToIngredients(getPossibleIngredientsForAllergens(recipes))
+        getAllergensToIngredients(getAllergensToPossibleIngredients(recipes))
 
     println(recipes
         .flatMap { it.ingredients }
