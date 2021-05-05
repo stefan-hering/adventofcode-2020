@@ -98,17 +98,17 @@ fun descend(scanner: Scanner, rule: Rule): List<Int> =
 /*
  * Regex approach, only possible for part 1
  */
-fun getRegex(rules: Map<Int, Rule>) =
-    Regex(getRegex(rules[0]!!, rules)
+fun getRegex(rules: Map<Int, Rule>): Regex =
+    Regex(getRegexString(rules[0]!!, rules)
         .replace(" ", "")
         .also { println(it) })
 
-fun getRegex(current: Rule, rules: Map<Int, Rule>) =
-    when (current) {
+fun getRegexString(current: Rule, rules: Map<Int, Rule>): String {
+    return when (current) {
         is ReferencingRule -> {
             """(${
                 current.rules.map { childrenLists ->
-                    childrenLists.map { child -> getRegex(rules[child]!!, rules) }.joinToString(separator = "")
+                    childrenLists.map { child -> getRegexString(rules[child]!!, rules) }.joinToString(separator = "")
                 }.joinToString(separator = "|")
             })"""
         }
@@ -118,14 +118,23 @@ fun getRegex(current: Rule, rules: Map<Int, Rule>) =
         else -> throw IllegalStateException()
 
     }
+}
 
-
-fun part1(rules: Map<Int, Rule>, messages: List<String>) {
+fun part1Regex(rules: Map<Int, Rule>, messages: List<String>) {
     val regex = getRegex(rules)
 
     println(messages.filter {
         regex.matchEntire(it) != null
     }.size)
+}
+
+fun part1Parser(rules: Map<Int, Rule>, messages: List<String>) {
+    val rootRule = buildSyntaxTree(rules)
+    messages.map {
+        matchesRules(it, rootRule)
+    }.filter { it }
+        .count()
+        .let { println(it) }
 }
 
 fun part2(rules: Map<Int, Rule>, messages: List<String>) {
@@ -137,13 +146,13 @@ fun part2(rules: Map<Int, Rule>, messages: List<String>) {
     val rootRule = buildSyntaxTree(part2Rules)
     messages.map {
         matchesRules(it, rootRule)
-    }
-        .filter { it }
+    }.filter { it }
         .count()
         .let { println(it) }
 }
 
 fun main() {
-    part1(input.first, input.second)
+    part1Regex(input.first, input.second)
+    part1Parser(input.first, input.second)
     part2(input.first, input.second)
 }
